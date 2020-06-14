@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Flask, request
 from flask_socketio import SocketIO
 
@@ -8,7 +10,6 @@ PORT = 3000
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret_key'
-
 io = SocketIO(app)
 
 
@@ -48,7 +49,7 @@ def connect(data):
 
 @io.on('ping')
 def ping():
-    print("pong!",  request.sid)
+    print("pong!", request.sid)
 
 
 @io.on('disconnect')
@@ -70,12 +71,34 @@ def disconnect(data):
 
 @io.on('message')
 def message(data):
+    room = data['room']
+    text = data['text']
+    data['date'] = str(datetime.datetime.now())
+
     client = ClientManager.instance().find(data['uuid'])
     users = ClientManager.instance().find_users(client.uuid)
 
     for user in users:
-        print(user.uuid)
+        if room not in user.rooms:
+            json = {
+                'title': room,
+                'caption': text
+            }
+
+            user.rooms.append(room)
+            io.emit('room', json, room=user.id)
+
         io.emit('message', data, room=user.id)
+
+
+@io.on('send')
+def send(data):
+    uuid = data['uuid']
+
+    client = ClientManager.instance().find(uuid)
+    target = ClientManager.instance().find(client.target_id)
+
+    io.emit('send', data, room=target.id)
 
 
 if __name__ == '__main__':

@@ -50,6 +50,7 @@ class BridgeClient(Client):
 
 class UserClient(Client):
     target_id = ''
+    rooms = []
 
     def __init__(self, client_id, uuid, target_id):
         self.target_id = target_id

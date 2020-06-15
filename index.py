@@ -5,9 +5,6 @@ from flask_socketio import SocketIO
 
 from client import Client, BridgeClient, UserClient, ClientManager
 
-HOST = '127.0.0.1'
-PORT = 3000
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret_key'
 io = SocketIO(app)
@@ -102,4 +99,4 @@ def send(data):
 
 
 if __name__ == '__main__':
-    io.run(app, host=HOST, port=PORT)
+    io.run(app)

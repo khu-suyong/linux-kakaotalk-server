@@ -15,7 +15,7 @@ def index():
     result = ''
 
     for c in ClientManager.instance().all():
-        result += f'id: {c.id}, type: {c.type}\n'
+        result += 'id: %s, type: %s\n' % (c.id, c.type)
 
     return result
 
@@ -85,8 +85,11 @@ def message(data):
             user.rooms.append(room)
             io.emit('room', json, room=user.id)
 
+            print('room', request.sid)
+
         io.emit('message', data, room=user.id)
 
+    print('message', request.sid)
 
 @io.on('send')
 def send(data):
@@ -96,6 +99,8 @@ def send(data):
     target = ClientManager.instance().find(client.target_id)
 
     io.emit('send', data, room=target.id)
+
+    print('send', request.sid)
 
 
 if __name__ == '__main__':

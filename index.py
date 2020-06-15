@@ -68,7 +68,7 @@ def disconnect(data):
 
 @io.on('message')
 def message(data):
-    # room = data['room']
+    r = data['room']
     text = data['text']
     data['date'] = str(datetime.datetime.now())
 
@@ -76,13 +76,13 @@ def message(data):
     users = ClientManager.instance().find_users(client.uuid)
 
     for user in users:
-        if room not in user.rooms:
+        if r not in user.rooms:
             json = {
-                'title': room.title,
+                'title': r,
                 'caption': text
             }
 
-            user.rooms.append(json)
+            user.rooms.append(r)
             io.emit('room', json, room=user.id)
 
             print('room', request.sid)
@@ -98,8 +98,8 @@ def room(data):
 
     for r in client.rooms:
         io.emit('room', {
-            'title': r.title,
-            'caption': r.caption
+            'title': r,
+            'caption': ''
         }, room=client.id)
 
     print('room', request.sid)

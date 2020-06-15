@@ -91,6 +91,16 @@ def message(data):
 
     print('message', request.sid)
 
+
+@io.on('room')
+def room(data):
+    client = ClientManager.instance().find(data['uuid'])
+
+    io.emit('room', client.rooms, room=client.id)
+
+    print('room', request.sid)
+
+
 @io.on('send')
 def send(data):
     uuid = data['uuid']
